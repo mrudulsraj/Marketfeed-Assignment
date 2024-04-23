@@ -41,3 +41,33 @@ analyze_log_file() {
 		fi
 	    done
 	}
+print_log_level_summary() {
+    log_message "INFO" "Log level counts summary:"
+    for level in "${!log_level_counts[@]}"; do
+        log_message "INFO" "$level: ${log_level_counts["$level"]}"
+    done
+    log_message "INFO" "-------------------------------------"
+}
+
+print_error_messages() {
+    log_message "INFO" "Top error messages:"
+    IFS=$'\n' sorted_errors=($(sort -nrk2 <<< "${@}" | head -n 5))
+    for error_line in "${sorted_errors[@]}"; do
+        error_message=$(echo "$error_line" | awk '{print $1}')
+        error_count=$(echo "$error_line" | awk '{print $2}')
+        log_message "INFO" "$error_message: $error_count"
+    done
+    log_message "INFO" "-------------------------------------"
+}
+
+main() {
+    touch "$SCRIPT_LOG" || { echo "Error creating script log file '$SCRIPT_LOG'. Exiting."; exit 1; }
+
+    log_message "INFO" "Script started."
+
+    analyze_log_file
+
+    log_message "INFO" "Script finished."
+}
+
+main
