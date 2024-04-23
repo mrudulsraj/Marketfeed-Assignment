@@ -8,3 +8,7 @@ log_message() {
     local message="$2"
     echo "$(date +'%Y-%m-%d %H:%M:%S') [$log_level] $message" >> "$SCRIPT_LOG"
 }
+handle_signals() {
+    log_message "INFO" "Received signal. Exiting."
+    exit 0
+}
